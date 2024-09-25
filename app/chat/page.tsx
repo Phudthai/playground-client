@@ -13,6 +13,7 @@ const ChatRooms = () => {
     setSocket(socketInstance);
 
     return () => {
+      console.log("Disconnecting socket...");
       socketInstance.disconnect();
     };
   }, []);

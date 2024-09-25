@@ -41,7 +41,7 @@ const ChatRoom = () => {
   };
 
   useEffect(() => {
-    setUser(localStorage.getItem("userName"));
+    setUser(localStorage.getItem("userName") || "Anonymous");
     fetchRooms();
 
     // ฟัง event 'message' จาก Socket.IO
