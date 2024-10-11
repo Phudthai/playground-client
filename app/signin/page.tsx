@@ -3,6 +3,7 @@ import { useState } from "react";
 import Head from "next/head";
 import axios from "axios";
 import { useEffect } from "react";
+import Cookies from "js-cookie";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -16,8 +17,8 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      await axios.post(
-        "http://localhost:5000/api/auths/backoffice/login",
+      const res = await axios.post(
+        "http://localhost:5000/api/backoffice/auths/login",
         {
           username,
           password,
@@ -27,50 +28,58 @@ export default function Login() {
           withCredentials: true,
         }
       );
-      window.location.href = "/me";
+      console.log(res.data.refreshExpiresIn); 
+      const refreshExpires = res.data.refreshExpiresIn === "7d" ? 7 : 1 ;
+      console.log(refreshExpires)
+      Cookies.set("accessToken", res.data.accessToken, { expires: 0.0104167 });
+      Cookies.set("refreshToken", res.data.refreshToken, {
+        expires: refreshExpires,
+      });
+      console.log(res.data);
+      // window.location.href = "/me";
     } catch (error) {
       console.error(error);
     }
   };
 
-  const fetchUserProfile = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/api/auths/backoffice/me",
-        { withCredentials: true }
-      );
-      window.location.href = "/me";
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error) && error.response) {
-        if (error.response.status === 401) {
-          await axios
-            .post(
-              "http://localhost:5000/api/auths/backoffice/refresh-token",
-              {},
-              { withCredentials: true }
-            )
-            .then(async (response) => {
-              const reResponse = await axios.get(
-                "http://localhost:5000/api/auths/backoffice/me",
-                { withCredentials: true }
-              );
-              window.location.href = "/me";
-            })
-            .catch((error) => {
-              console.error("Error refreshing token", error);
-            });
-        } else {
-          console.error("Error fetching user profile", error);
-        }
-      } else {
-        console.error("Error fetching user profile", error);
-      }
-    }
-  };
+  // const fetchUserProfile = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "http://localhost:5000/api/backoffice/auths/me",
+  //       { withCredentials: true }
+  //     );
+  //     window.location.href = "/me";
+  //   } catch (error: unknown) {
+  //     if (axios.isAxiosError(error) && error.response) {
+  //       if (error.response.status === 401) {
+  //         await axios
+  //           .post(
+  //             "http://localhost:5000/api/auths/backoffice/refresh-token",
+  //             {},
+  //             { withCredentials: true }
+  //           )
+  //           .then(async (response) => {
+  //             const reResponse = await axios.get(
+  //               "http://localhost:5000/api/auths/backoffice/me",
+  //               { withCredentials: true }
+  //             );
+  //             window.location.href = "/me";
+  //           })
+  //           .catch((error) => {
+  //             console.error("Error refreshing token", error);
+  //           });
+  //       } else {
+  //         console.error("Error fetching user profile", error);
+  //       }
+  //     } else {
+  //       console.error("Error fetching user profile", error);
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
+  // useEffect(() => {
+  //   fetchUserProfile();
+  // }, []);
 
   return (
     <>
@@ -96,7 +105,7 @@ export default function Login() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border text-black border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Enter your username"
               />
             </div>
@@ -113,14 +122,14 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border text-black border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Enter your password"
               />
             </div>
             <div className="flex items-center justify-between">
               <button
                 type="submit"
-                className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="w-full bg-indigo-500  hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 onClick={handleLogin}
               >
                 Sign In

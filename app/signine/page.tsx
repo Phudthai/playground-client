@@ -3,6 +3,7 @@ import { useState } from "react";
 import Head from "next/head";
 import axios from "axios";
 import { useEffect } from "react";
+import Cookies from "js-cookie";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,7 +17,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      await axios.post(
+      const res = await axios.post(
         "http://localhost:5000/api/auths/enduser/login",
         {
           email,
@@ -27,6 +28,11 @@ export default function Login() {
           withCredentials: true,
         }
       );
+      Cookies.set("accessToken", res.data.accessToken);
+      Cookies.set("refreshToken", res.data.refreshToken, {
+        expires: res.data.refreshExpiresIn,
+      });
+      console.log(res.data)
     } catch (error) {
       console.error(error);
     }
@@ -95,7 +101,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border text-black border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Enter your email"
               />
             </div>
@@ -112,7 +118,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border text-black border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Enter your password"
               />
             </div>
