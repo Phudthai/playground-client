@@ -11,7 +11,7 @@ const FcmPage = () => {
     console.log(fcmToken);
     try {
       const response = await axios.post(
-        "http://localhost:5000/send-notification",
+        "http://localhost:3000/send-notification",
         {
           title: "test",
           body: "test",

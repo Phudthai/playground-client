@@ -12,7 +12,7 @@ export default function OnetimePage() {
     try {
       const { data } = await axios.post(
         // `${process.env.SERVER_API}/stripe/checkout-onetime`,
-        "http://localhost:5000/api/stripe/checkout-onetime",
+        "http://localhost:3000/api/stripe/checkout-onetime",
         {
           user_id: "66fe51d541ac3972bac2ccc1",
         }

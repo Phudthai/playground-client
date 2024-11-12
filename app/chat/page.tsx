@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5000", {
+const socket = io("http://localhost:3000", {
   transports: ["websocket"],
 });
 
@@ -20,7 +20,7 @@ const ChatRoom = () => {
   const fetchRooms = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/rooms/all-rooms"
+        "http://localhost:3000/api/rooms/all-rooms"
       );
       setRooms(response.data);
     } catch (error) {
@@ -32,7 +32,7 @@ const ChatRoom = () => {
   const fetchChats = async (roomId: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/chats/${roomId}`
+        `http://localhost:3000/api/chats/${roomId}`
       );
       setMessages(response.data.messages); // อัปเดตสถานะ messages ด้วยข้อมูลจาก API
     } catch (error) {

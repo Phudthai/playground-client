@@ -17,7 +17,7 @@ export default function MePage() {
   const fetchUserProfile = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/auths/backoffice/me",
+        "http://localhost:3000/api/auths/backoffice/me",
         { withCredentials: true }
       );
       setUserProfile({
@@ -32,13 +32,13 @@ export default function MePage() {
         if (error.response.status === 401) {
           await axios
             .post(
-              "http://localhost:5000/api/auths/backoffice/refresh-token",
+              "http://localhost:3000/api/auths/backoffice/refresh-token",
               {},
               { withCredentials: true }
             )
             .then(async (response) => {
               const reResponse = await axios.get(
-                "http://localhost:5000/api/auths/backoffice/me",
+                "http://localhost:3000/api/auths/backoffice/me",
                 { withCredentials: true }
               );
 
@@ -66,7 +66,7 @@ export default function MePage() {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/auths/backoffice/logout",
+        "http://localhost:3000/api/auths/backoffice/logout",
         {},
         {
           withCredentials: true,
