@@ -25,20 +25,10 @@ const FcmPage = () => {
   };
 
   useEffect(() => {
-    // ตรวจสอบว่ากำลังรันโค้ดนี้บน client-side เท่านั้น
     if (typeof window !== "undefined") {
       requestFDMToken().then((token) => {
         if (token) {
             setFcmToken(token);
-        //   const response = axios.post(
-        //     "http://localhost:5000/send-notification",
-        //     {
-        //       title: "test",
-        //       body: "test",
-        //       token: token,
-        //     }
-        //   );
-        //   console.log(response);
         }
       });
     }
