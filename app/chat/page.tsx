@@ -207,7 +207,7 @@ const ChatRoom = () => {
                 </button>
                 <input
                   type="text"
-                  className="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring focus:ring-blue-300"
+                  className="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring focus:ring-blue-300 text-black"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Type your message..."
