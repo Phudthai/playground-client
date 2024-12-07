@@ -13,7 +13,7 @@ const ChatRoom = () => {
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [messages, setMessages] = useState<
     {
-      is_avatar_message: Boolean;
+      is_avatar_message: boolean;
       message: string;
       suggested_messages: string;
       createdAt: Date;
@@ -46,7 +46,8 @@ const ChatRoom = () => {
           withCredentials: true,
         }
       );
-      setRooms(response.data);
+      setRooms(response.data.docs);
+      // console.log(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -61,7 +62,8 @@ const ChatRoom = () => {
           withCredentials: true,
         }
       );
-      setMessages(response.data.messages);
+      setMessages(response.data.messages.docs);
+      console.log(response.data);
     } catch (error) {
       console.error("Error fetching chats:", error);
     }
@@ -69,8 +71,9 @@ const ChatRoom = () => {
 
   const clearChat = async (room_id: string) => {
     try {
-      const response = await axios.delete(
+      const response = await axios.post(
         `http://localhost:3000/api/enduser/chats/clear-chat/${room_id}`,
+        {},
         {
           headers: { authorization: "Bearer " + jsCookie.get("accessToken") },
           withCredentials: true,
