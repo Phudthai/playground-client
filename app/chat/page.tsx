@@ -124,10 +124,22 @@ const ChatRoom = () => {
       };
 
       socket.emit("message", message, (acknowledgment: any) => {
+        console.log(acknowledgment);
         if (acknowledgment?.status === "ok") {
           setNewMessage("");
-        } else {
-          console.error("Message not sent:", acknowledgment?.error);
+        } else if (acknowledgment?.status === "error") {
+          // ตรวจสอบประเภท error เพื่อแสดงข้อความที่เหมาะสม
+          if (acknowledgment.error_type === "insufficient_credit") {
+            alert(
+              `เครดิตไม่พอ! ต้องการ ${acknowledgment.details.required_credit} แต่มี ${acknowledgment.details.current_credit}`
+            );
+          } else if (acknowledgment.error_type === "rate_limit_ai") {
+            alert(`กรุณารอสักครู่ Rate limit exceeded`);
+          } else if (acknowledgment.error_type === "unknown_error") {
+            alert("เกิดข้อผิดพลาดภายในระบบ");
+          } else {
+            alert(`เกิดข้อผิดพลาด: ${acknowledgment.error}`);
+          }
         }
       });
     }
