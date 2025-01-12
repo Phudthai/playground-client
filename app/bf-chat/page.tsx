@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import io from "socket.io-client";
+import jsCookie from "js-cookie";
 
 const socket = io("http://localhost:3000", { transports: ["websocket"] });
 
@@ -22,34 +24,58 @@ const BackOfficeChat = () => {
       setMessages((prev) => [...prev, message]);
     });
 
+    socket.on("connect_error", (err) => {
+      console.error("Connection error:", err);
+    });
+
     // ดึงห้องแชทจาก API
     fetchRooms();
 
     return () => {
-      socket.disconnect();
+      socket.off("connect");
+      socket.off("message");
+      socket.off("connect_error");
     };
   }, []);
 
   const fetchRooms = async () => {
+    const avatar_id = localStorage.getItem("avatar_id");
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/enduser/chats/all-rooms",
+      const response = await axios.get(
+        `http://localhost:3000/api/backoffice/chats/all-rooms/${avatar_id}`,
         {
-          headers: { Authorization: "Bearer your_access_token" },
-          credentials: "include",
+          headers: { Authorization: "Bearer " + jsCookie.get("accessToken") },
+          withCredentials: true,
         }
       );
-      const data = await response.json();
-      setRooms(data.docs);
+      console.log(response.data);
+      setRooms(response.data);
     } catch (error) {
       console.error("Error fetching rooms:", error);
+    }
+  };
+
+  const fetchChats = async (room_id: string) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/backoffice/chats/get-messages/${room_id}`,
+        {
+          headers: { Authorization: "Bearer " + jsCookie.get("accessToken") },
+          withCredentials: true,
+        }
+      );
+      console.log(response.data.docs);
+      setMessages(response.data.docs);
+    } catch (error) {
+      console.error("Error fetching chats:", error);
     }
   };
 
   const handleRoomSelect = (room_id: string) => {
     setSelectedRoom(room_id);
     setMessages([]); // ล้างข้อความก่อนหน้า
-    socket.emit("joinRoom", { room_id, role: "backoffice" });
+    socket.emit("joinRoom", room_id);
+    fetchChats(room_id);
   };
 
   return (
@@ -145,5 +171,4 @@ const BackOfficeChat = () => {
     </div>
   );
 };
-
 export default BackOfficeChat;
