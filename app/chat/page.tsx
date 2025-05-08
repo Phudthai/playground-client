@@ -15,6 +15,12 @@ const ChatRoom = () => {
     {
       is_avatar_message: boolean;
       message: string;
+      affiliate_products: Array<{product_name : string,
+        category: string,
+        sub_category: string,
+        description: string,
+        link: string,
+        score:number      }>;
       suggested_messages: string;
       createdAt: Date;
     }[]
@@ -183,32 +189,58 @@ const ChatRoom = () => {
             {/* Chat Messages */}
             <div className="flex-1 overflow-y-auto bg-gray-50 p-6 space-y-4">
               {messages.map((msg, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center ${
-                    msg.is_avatar_message ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  {/* Message Bubble */}
-                  <div
-                    className={`max-w-lg px-4 py-2 rounded-lg shadow-md ${
-                      msg.is_avatar_message
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-200 text-gray-800"
-                    }`}
-                  >
-                    <p>{msg.message}</p>
-                  </div>
+  <div
+    key={index}
+    className={`flex items-center ${
+      msg.is_avatar_message ? "justify-end" : "justify-start"
+    }`}
+  >
+    {/* Message Bubble */}
+    <div
+      className={`max-w-lg px-4 py-2 rounded-lg shadow-md ${
+        msg.is_avatar_message
+          ? "bg-blue-600 text-white"
+          : "bg-gray-200 text-gray-800"
+      }`}
+    >
+      <p>{msg.message}</p>
 
-                  {/* Timestamp */}
-                  <span className="ml-2 text-xs text-gray-500">
-                    {new Date(msg.createdAt).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-              ))}
+      {/* Show affiliate products if present */}
+      {msg.affiliate_products && msg.affiliate_products.length > 0 && (
+        <div className="mt-2 space-y-2">
+          {msg.affiliate_products.map((product, idx) => (
+            <div
+              key={idx}
+              className="border border-gray-300 rounded-md p-2 bg-white text-black"
+            >
+              <p className="font-semibold">{product.product_name}</p>
+              <p className="text-sm text-gray-600">
+                {product.category} - {product.sub_category}
+              </p>
+              <p className="text-sm">{product.description}</p>
+              <a
+                href={product.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline text-sm"
+              >
+                View Product
+              </a>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {/* Timestamp */}
+    <span className="ml-2 text-xs text-gray-500">
+      {new Date(msg.createdAt).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}
+    </span>
+  </div>
+))}
             </div>
 
             {/* Chat Input */}
